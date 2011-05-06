@@ -1,17 +1,17 @@
 # pswincom-clj
 
-FIXME: write description
+pswincom-clj is a Clojure library for interacting with the PSWinCom SMS services.
 
 ## Usage
 
-FIXME: write
+See the samples directory.
 
 ## Installation
 
-FIXME: write
+Locate the [latest jar at Clojars](http://clojars.org/pswincom-clj) and add it to your dependencies list in your leiningen project file.
 
 ## License
 
-Copyright (C) 2010 FIXME
+Copyright (C) 2011 
 
 Distributed under the Eclipse Public License, the same as Clojure.
