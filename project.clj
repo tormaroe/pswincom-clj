@@ -1,4 +1,4 @@
-(defproject pswincom-clj "0.2.0"
+(defproject pswincom-clj "0.3.0"
   :description "PSWinCom SMS client library"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]]
