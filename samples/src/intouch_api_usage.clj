@@ -40,4 +40,13 @@
      (send-message 12345678 "This is a message!"
                    :SenderNumber "FooBar"         ;=> Override sender number (if account allows)
                    :HandledDate (json-date (minutes-from-now 30)))   ;=> Postpone for 30 minutes
+
+     ; You can also send messages to multiple recipients, inkluding groups and contacts.
+     ; The recipient functions lets you specify one or all of numbers, groups or contacts.
+     ; The arguments for these can be a single number/id, or a list of numbers/ids.
+     
+     (send-message (recipients :numbers 12345678
+                               :groups 234
+                               :contacts [4321 5432 6543])
+                   "Message to various recipients")
 ))

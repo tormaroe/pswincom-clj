@@ -6,7 +6,9 @@
     Technical specifications are located at:
     http://wiki.pswin.com/Intouch-REST-API.ashx
     "
-    (:use clojure.contrib.json)
+    (:use clojure.contrib.json
+          [clojure.string :only [join]]
+          [clojure.contrib.core :only [seqable?]])
     (:require [clojure.contrib.http.agent :as http]
               [clojure.contrib.base64     :as b64 ])
     (:import (java.util Calendar)))
@@ -87,6 +89,25 @@
       (resources r "PUT" 
            (json-str (merge (resources r) 
                             new-values))))
+
+(defn- receivers-part [r-key data]
+       (letfn [(create-part [x] 
+                            (if (= :numbers r-key)
+                              (str x)
+                              (str "/" (name r-key) "/" x)))]
+         (let [data (r-key data)]
+           (when data
+             (if (seqable? data)
+               (join ";" (map create-part data))
+               (create-part data))))))
+
+(defn receivers [& args]
+      (let [args-map (apply hash-map args)]
+        (join ";" 
+               (filter (complement nil?) 
+                       (list (receivers-part :numbers args-map)
+                             (receivers-part :groups args-map)
+                             (receivers-part :contacts args-map))))))
 
 (defn send-message [to text & options]
       (resources "messages" "POST"
