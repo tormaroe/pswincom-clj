@@ -3,7 +3,7 @@
 
 (with-intouch "http://intouchapi.pswin.com/1/" ; overrides the default...
 
-  (with-authentication "username" "password"
+  (with-authentication "username" "password" "domain"
 
      ;; Querying for data ------------------------------------------------------------------------
 

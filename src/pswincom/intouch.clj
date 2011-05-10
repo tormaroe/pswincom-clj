@@ -13,6 +13,7 @@
 
 (def *username* nil) ; The PSWinCom Intouch account username
 (def *password* nil) ; The PSWinCom Intouch account password
+(def *domain*   nil) ; The PSWinCom Intouch account domain
 (def *api-url* "http://intouchapi.pswin.com/1/") ; service endpoint
 (def *debug* (atom false))
 
@@ -28,13 +29,13 @@
 (defmacro with-intouch [g & exprs]
   `(binding [*api-url* ~g] ~@exprs))
 
-(defmacro with-authentication [u p & exprs]
-  `(binding [*username* ~u, *password* ~p] ~@exprs))
+(defmacro with-authentication [u p d & exprs]
+  `(binding [*username* ~u, *password* ~p, *domain* ~d] ~@exprs))
 
 (defn- authorization 
        "Prepares/encodes token for basic authentication"
        []
-       (->> (str *username* ":" *password*)
+       (->> (str *username* "@" *domain* ":" *password*)
             b64/encode-str
             (str "Basic ")))
 
