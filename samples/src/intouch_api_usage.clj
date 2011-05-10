@@ -49,4 +49,5 @@
                                :groups 234
                                :contacts [4321 5432 6543])
                    "Message to various recipients")
-))
+     )
+)

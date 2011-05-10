@@ -87,8 +87,8 @@
        then PUTs the result back to the same resource."
       [r new-values]
       (resources r "PUT" 
-           (json-str (merge (resources r) 
-                            new-values))))
+           (merge (resources r) 
+                  new-values)))
 
 (defn- receivers-part [r-key data]
        (letfn [(create-part [x] 
