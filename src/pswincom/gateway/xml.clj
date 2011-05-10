@@ -17,6 +17,9 @@
     (when content
       (<> tag (formater content)))))
 
+(defn- ^String map-str [f & coll]
+  (apply str (apply map f coll)))
+
 (defn request-xml 
   "Generate the XML for a send message request"
   [args]
@@ -26,16 +29,16 @@
             (<> :PW (:password args))
             (<> :MSGLST 
                 (when-let [messages (:messages args)]
-                   (apply str 
-                          (for [i (range (count messages))
-                                :let [m (messages i)]]
-                             (<> :MSG
-                                 (<> :ID (inc i))
-                                 (<> :TEXT (:text m))
-                                 (<> :RCV (:receiver m))
-                                 (<optional> :SND (:sender m))
-                                 (<optional> :TTL (:TTL m))
-                                 (<optional> :TARIFF (:tariff m))
-                                 (<optional> :SERVICECODE (:service-code m))
-                                 (<optional> :DELIVERYTIME (:delivery-time m)
-                                             datetime-format)))))))))
+                   (map-str (fn [m i]
+                                (<> :MSG
+                                    (<> :ID i)
+                                    (<> :TEXT (:text m))
+                                    (<> :RCV (:receiver m))
+                                    (<optional> :SND (:sender m))
+                                    (<optional> :TTL (:TTL m))
+                                    (<optional> :TARIFF (:tariff m))
+                                    (<optional> :SERVICECODE (:service-code m))
+                                    (<optional> :DELIVERYTIME (:delivery-time m)
+                                                datetime-format)))
+                            messages
+                            (drop 1 (range))))))))
