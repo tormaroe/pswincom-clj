@@ -45,7 +45,7 @@
      ; The recipient functions lets you specify one or all of numbers, groups or contacts.
      ; The arguments for these can be a single number/id, or a list of numbers/ids.
      
-     (send-message (recipients :numbers 12345678
+     (send-message (receivers  :numbers 12345678
                                :groups 234
                                :contacts [4321 5432 6543])
                    "Message to various recipients")
