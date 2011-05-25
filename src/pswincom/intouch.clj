@@ -54,6 +54,14 @@
         (. now add Calendar/MINUTE n)
         now))
 
+(defn resource-path [& params]
+      (letfn [(param->path-elem [x]
+                 (cond
+                   (keyword? x) (name x)
+                   (number? x) (str x)
+                   (string? x) x))]
+        (join "/" (map param->path-elem params))))
+
 (defn resources 
       "Main API function which can be used on any resource with any http verb."
       ([r          ] (resources r "GET" nil))

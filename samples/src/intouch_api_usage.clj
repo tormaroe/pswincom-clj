@@ -11,6 +11,13 @@
      (resources "groups/45")                     ;=> Returns group 45
      (resources "groups/45/contacts")            ;=> Returns all contacts in groups 45
 
+     ; Resource paths can be constructed by a helper function. The three expressions below
+     ; are the same as the three above..
+
+     (resources (resource-path :groups))
+     (resources (resource-path :groups 45))
+     (resources (resource-path "groups" 45 :contacts)) ; strings, numbers and keywords can be mixed
+
      ;; Deleting data ----------------------------------------------------------------------------
 
      (delete-resource "groups/45/contacts/2039") ;=> Removes contact 2039 from group 45
@@ -42,7 +49,7 @@
                    :HandledDate (json-date (minutes-from-now 30)))   ;=> Postpone for 30 minutes
 
      ; You can also send messages to multiple recipients, inkluding groups and contacts.
-     ; The recipient functions lets you specify one or all of numbers, groups or contacts.
+     ; The receivers functions lets you specify one or all of numbers, groups or contacts.
      ; The arguments for these can be a single number/id, or a list of numbers/ids.
      
      (send-message (receivers  :numbers 12345678
