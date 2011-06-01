@@ -3,17 +3,11 @@
   (:use [pswincom.gateway] :reload)
   (:use [clojure.test]))
 
-(deftest with-authentication-spec
-   (letfn [(assert-auth [u p]
-               (is (= u *username*))
-               (is (= p *password*)))]
+(defn- assert-auth [u p]
+      (is (= u *username*))
+      (is (= p *password*)))
 
-      (assert-auth nil nil)
-      (with-authentication "user1" "pa$$w0rd"         
-         (assert-auth "user1" "pa$$w0rd"))   
-      (assert-auth nil nil)))
-
-(defn create-sender-mock [expected-body flag-to-set]
+(defn- create-sender-mock [expected-body flag-to-set]
       (fn [host & args]
           (swap! flag-to-set #(or % true))
           (doseq [[key val] (partition 2 args)]
@@ -21,6 +15,32 @@
                    :method (is (= "POST" val))
                    :body (is (= expected-body val))
                    :headers (is (= { "Content-Type" "text/xml" } val))))))
+
+(deftest with-authentication-spec
+      (assert-auth nil nil)
+      (with-authentication "user1" "pa$$w0rd"         
+         (assert-auth "user1" "pa$$w0rd"))   
+      (assert-auth nil nil))
+
+(deftest with-config-spec
+         (with-config {:username "foo", :password "bar"}
+              (assert-auth "foo" "bar"))
+         (with-config {:username "foo", :password "bar", :from 47012345678}
+              (assert-auth "foo" "bar")
+              (is (= *sender* 47012345678))
+
+              ; Verify that sender is set from config
+              (let [sender-was-called (atom nil)]
+                (binding [*sender-function* 
+                    (create-sender-mock 
+                      (request-xml {:user "foo" 
+                                    :password "bar"
+                                    :messages [{:receiver 4788888888
+                                                :text "Hi"
+                                                :sender 47012345678}]})
+                      sender-was-called)]
+                   (send-sms 4788888888 "Hi")
+                   (is (true? @sender-was-called))))))
 
 (deftest send-sms-spec
  (testing "that send-sms dispatches to function stored in *sender-function*,

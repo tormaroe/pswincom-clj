@@ -5,9 +5,16 @@
 (def *username* nil) ; The PSWinCom Gateway account username
 (def *password* nil) ; The PSWinCom Gateway account password
 (def *gateway* "http://gw2-fro.pswin.com:81/") ; service endpoint
+(def *sender* nil) ; If not nil, this will be used as sender
 
 ; This var can be rebound to override the actual sending
 (def *sender-function* #'http/http-agent)
+
+(defn- set-sender-if-missing [messages]
+  (map #(if (nil? (:sender %))
+          (assoc % :sender *sender*)
+          %) 
+       messages))
 
 (defn- internal-send [messages]
   (*sender-function* *gateway*
@@ -15,7 +22,7 @@
                      :headers { "Content-Type" "text/xml" }
                      :body (request-xml { :user *username* 
                                           :password *password* 
-                                          :messages messages})))
+                                          :messages (set-sender-if-missing messages)})))
 
 (defmacro with-gateway [g & exprs]
   `(binding [*gateway* ~g] ~@exprs))
@@ -23,6 +30,14 @@
 (defmacro with-authentication [u p & exprs]
   `(binding [*username* ~u, *password* ~p] ~@exprs))
 
+(defmacro with-config [m & exprs]
+  `(binding [*username* (:username ~m) 
+             *password* (:password ~m)
+             *sender*   (:from ~m)
+             *gateway*  (if-let [host# (:host ~m)]
+                           host#
+                           *gateway*)] 
+        ~@exprs))
 
 (defn send-sms 
  "Sends SMS message with text to receiver. Supports optional
